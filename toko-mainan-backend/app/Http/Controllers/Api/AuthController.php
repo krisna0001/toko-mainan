@@ -113,6 +113,15 @@ class AuthController extends Controller
 
             $user = auth()->user();
 
+            // SECURITY: Check if user is blocked
+            if ($user->is_blocked) {
+                auth()->logout();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akun Anda di-suspend. Hubungi admin untuk informasi lebih lanjut.'
+                ], 403);
+            }
+
             // SECURITY: Block admin from logging in through customer form
             if ($user->role === 'admin') {
                 auth()->logout();
@@ -172,6 +181,15 @@ class AuthController extends Controller
             }
 
             $user = auth()->user();
+
+            // SECURITY: Check if user is blocked
+            if ($user->is_blocked) {
+                auth()->logout();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akun Anda di-suspend. Hubungi admin untuk informasi lebih lanjut.'
+                ], 403);
+            }
 
             // SECURITY: Only allow admin role
             if ($user->role !== 'admin') {
